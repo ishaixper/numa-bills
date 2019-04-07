@@ -1,0 +1,8 @@
+venv
+tmp
+uploads
+*.sqlite3
+*.csv
+.idea
+__pycache__
+**/__pycache__
