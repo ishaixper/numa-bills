@@ -10,7 +10,8 @@ from bills.models import Bill
 
 def run_gdrive_tool(command):
 
-    gdrive_tool_path = os.path.normpath(os.path.dirname(__file__) + "/../../../tools/gdrive-windows-x64.exe")
+    #gdrive_tool_path = os.path.normpath(os.path.dirname(__file__) + "/../../../tools/gdrive-windows-x64.exe")
+    gdrive_tool_path = "gdrive"
     print(gdrive_tool_path + " " + command)
     ret = os.system(gdrive_tool_path + " " + command)
     print(ret)
@@ -36,15 +37,18 @@ def download_spreadsheet_as_csv(id):
 
 def sync():
     csv_file = download_spreadsheet_as_csv("1-JD7zf6NyprMBsd1nOo34cCpYql24x0RndWDCgI6f6U")
+    print("file is here", csv_file)
     shutil.copyfile(csv_file, "tmp.csv")
     with open("tmp.csv", "r") as csv_file:
         reader = csv.reader(csv_file)
         first_skip = True
         for row in reader:
+            print(row)
             if first_skip:
                 first_skip = False
                 continue
-            (back_url, front_url, heritage, ebay, pmg, cat, name, num) = row
+            print(row)
+            (back_url, front_url, heritage, ebay, pmg, cat, name, num, billOrCoin) = row
             if len(back_url.split('/')) < 5 or len(front_url.split('/')) < 5:
                 print("empty row", row)
                 continue
