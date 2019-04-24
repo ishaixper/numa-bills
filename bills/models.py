@@ -13,11 +13,12 @@ class Bill(models.Model):
     catalog = models.CharField(max_length=30)
     front = models.ImageField(upload_to=UPLOAD_DIR)
     back = models.ImageField(upload_to=UPLOAD_DIR)
-    is_coin = models.BooleanField()
     pmg_link = models.CharField(max_length=256, blank= True)
     ebay_link = models.CharField(max_length=256, blank= True)
     heritage_link = models.CharField(max_length=256, blank= True)
-    features = JSONField()
+    is_coin = models.BooleanField(default = False)
+    image_id = models.CharField(max_length=256, blank= False)
+    features = JSONField(default = {})
 
     def __str__(self):
         return self.name
