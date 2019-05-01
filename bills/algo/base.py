@@ -11,7 +11,7 @@ class ImageSearchAlgorithmBase(ABC):
         pass
 
     @abstractmethod
-    def add_bill_to_library(self, id, front, back):
+    def add_bill_to_library(self, id, front, back, bill):
         pass
 
     @abstractmethod

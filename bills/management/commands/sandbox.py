@@ -2,6 +2,7 @@ import os
 
 from django.core.management import BaseCommand
 
+from bills.algo.detect_flow import DetectFlowImageSearch
 from bills.algo.dummy import DummyAlgorithm
 from bills.algo.hash import AverageHash, DHash, PHash, WDB4Hash, WHaarHash
 from bills.models import Bill
@@ -21,7 +22,7 @@ class Sandbox:
             front = bill.read_front_image()
             back = bill.read_back_image()
 
-            self.algorithm.add_bill_to_library(bill.id, front, back)
+            self.algorithm.add_bill_to_library(bill.id, front, back, bill)
 
     def test(self, front_file, back_file):
         front = None
@@ -43,6 +44,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         base_dir = os.path.normpath(os.path.dirname(__file__) + "/../../../test_set")
+        from os import listdir
+        from os.path import isfile, join
+        dirs = [f for f in listdir(base_dir) if not isfile(join(base_dir, f))]
+        test_set = 
         test_set = [
             base_dir + "/788/fr 788.jpg",
             base_dir + "/788/fr 788 d.jpg",
@@ -51,7 +56,8 @@ class Command(BaseCommand):
             base_dir + "/788/fr 788 o;.jpg",
             base_dir + "/788/fr 788 l.jpg"
         ]
-        algos = [DummyAlgorithm(), AverageHash(), DHash(), PHash(), WHaarHash(), WDB4Hash()]
+        #algos = [DummyAlgorithm(), AverageHash(), DHash(), PHash(), WHaarHash(), WDB4Hash()]
+        algos = [DetectFlowImageSearch()]
         for algo in algos:
             sandbox = Sandbox(algo)
             print("build library")

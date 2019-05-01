@@ -7,7 +7,7 @@ class DummyAlgorithm(ImageSearchAlgorithmBase):
         ImageSearchAlgorithmBase.__init__(self)
         self.bills = []
 
-    def add_bill_to_library(self, id, front, back):
+    def add_bill_to_library(self, id, front, back, bill):
         self.bills.append(id)
 
     def destroy(self):
