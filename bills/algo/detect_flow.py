@@ -2,48 +2,32 @@ import cv2 as cv
 import numpy as np
 from bills.algo.base import ImageSearchAlgorithmBase
 from bills.algo.coin_or_bill import detect_coin_or_bill
+from bills.algo.keypoint_matcher import preapre_image_for_keypoints, get_keypoints, match_and_score
 
-NUM_KEYPOINTS = 50
-HOMOGRAPHY_METHOD = cv.RANSAC
-RANSAC_REPROJ_THRESHOLD = 4.0
 
 class DetectFlowImageSearch(ImageSearchAlgorithmBase):
 
     def __init__(self):
         self.catalog = list()
-        self.orb_detector = cv.ORB_create(NUM_KEYPOINTS, patchSize=120, edgeThreshold=120)
-        # create BFMatcher object
-        self.bf_matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
 
-    def get_keypoints(self, front):
-        # find the keypoints and descriptors with ORB
-        kp1, des1 = self.orb_detector.detectAndCompute(front)
-        return kp1, des1
+    def get_keypoints(self, img):
+        img = preapre_image_for_keypoints(img)
+        return get_keypoints(img)
 
     def get_match_and_score(self, a1, a2):
-        (kp1, des1) = a1
-        (kp2, des2) = a2
-        matches = self.bf_matcher.match(des1, des2)
-        src_pts = np.float32([kp1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-        dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-        H, mask = cv.findHomography(src_pts, dst_pts, HOMOGRAPHY_METHOD, RANSAC_REPROJ_THRESHOLD)
-        computed_pt = H * src_pts
-        error_pt = np.sqrt((computed_pt.x - dst_pts.x) * (computed_pt.x - dst_pts.x) + (computed_pt.y - dst_pts.y) * (
-                    computed_pt.y - dst_pts.y))
-        return (matches, H, mask), error_pt
+        return match_and_score(a1, a2)
 
     def add_bill_to_library(self, id, front, back, bill):
         coin_bill_detection = detect_coin_or_bill(front, back)
-        if coin_bill_detection == None:
-            print("could not calculate coin/bill for " + id)
+        if coin_bill_detection is None:
+            print("could not calculate coin/bill for " + str(id))
         else:
             is_coin = coin_bill_detection[0] == "coin"
             if is_coin != bill.is_coin:
-                print("detected WRONG coin/bill type for " + id)
-
+                print("detected WRONG coin/bill type for " + str(id))
         front_kp = self.get_keypoints(front)
         back_kp = None
-        if back:
+        if back is not None:
             back_kp = self.get_keypoints(back)
         self.catalog.append({
             'id': id,
@@ -51,43 +35,53 @@ class DetectFlowImageSearch(ImageSearchAlgorithmBase):
             'back': back,
             'bill': bill,
             'front_kp': front_kp,
-            'back_kp': back_kp})
+            'back_kp': back_kp,
+        })
 
     def destroy(self):
         self.catalog = list()
 
     def predict(self, front=None, back=None):
         coin_bill_detection = detect_coin_or_bill(front, back)
-        if coin_bill_detection == None:
-            return "Not found"
-        (type, shape) = coin_bill_detection
-        print(type)
-        if type == "coin":
-            bills = filter(lambda b: b.is_coin, self.catalog)
+        if coin_bill_detection is None:
+            print("Not found shape")
+            bills = self.catalog
         else:
-            bills = filter(lambda b: not b.is_coin, self.catalog)
+            (type, shape) = coin_bill_detection
+            print(type)
+            if type == "coin":
+                bills = list(filter(lambda b: b['bill'].is_coin, self.catalog))
+            else:
+                bills = list(filter(lambda b: not b['bill'].is_coin, self.catalog))
 
         (front_kp, front_des) = self.get_keypoints(front)
         back_kp = back_des = None
-        if back:
+        if back is not None:
             (back_kp, back_des) = self.get_keypoints(back)
-        min_distance = float('inf')
-        best_matching = None
-        best_bill = None
-        for bill in bills:
-            (matching, distance) = self.get_match_and_score(bill.front_kp, (front_kp, front_des))
-            if distance < min_distance:
-                min_distance = distance
-                best_matching = matching
-                best_bill = bill
-            if bill.back_kp and back_kp:
-                (matching, distance) = self.get_match_and_score(bill.back_kp, (back_kp, back_des))
-                if distance < min_distance:
-                    min_distance = distance
-                    best_matching = matching
-                    best_bill = bill
+        dist = np.zeros((len(bills), 2))
+        for i in range(len(bills)):
+            bill = bills[i]
+            (matching, distance) = self.get_match_and_score(bill['front_kp'], (front_kp, front_des))
+            mean_distance = distance
+            if bill['back_kp'] is not None and back_kp is not None:
+                (matching, distance) = self.get_match_and_score(bill['back_kp'], (back_kp, back_des))
+                mean_distance = (mean_distance + distance) / 2
+            dist[i, 0] = bill["id"]
+            dist[i, 1] = mean_distance
 
-        if not best_bill:
-            raise Exception("did not match any bill")
-        image_id = best_bill.image_id
-        print(image_id)
+        sum = dist[:, 1].sum()
+        dist[:, 1] = dist[:, 1] / sum
+        dist = dist[dist[:,1].argsort()]
+        dist[:, 1] = 1 - dist[:, 1]
+        dist[:, 1] = np.power(dist[:, 1], 100)
+        sum = dist[:, 1].sum()
+        dist[:, 1] = dist[:, 1] / sum
+        return dist
+        # best_bill = dist[0, 0]
+        # if not best_bill:
+        #     raise Exception("did not match any bill")
+        # image_id = best_bill['bill'].image_id
+        # print(image_id)
+        # id = best_bill['id']
+        # p = min_distance / total_distance
+        # return id, p

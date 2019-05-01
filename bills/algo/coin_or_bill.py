@@ -58,7 +58,8 @@ def find_single_external_shape(img, debug=False, debug_name=""):
         x_delta = xmax - xmin
         y_delta = ymax - ymin
 
-        print(xmax, ymax, xmin, ymin)
+        if debug:
+            print(xmax, ymax, xmin, ymin)
         if x_delta < width / 20 or y_delta < height / 20:
             continue
         box = (xmin, ymin, xmax, ymax)
@@ -81,7 +82,7 @@ def find_single_external_shape(img, debug=False, debug_name=""):
         cv2.imshow(str(debug_name), np.hstack((img, blank_image)))
     return (found, points, box, flatten)
 
-def is_shape_roind(approx, points):
+def is_shape_roind(approx, points, debug = False):
     degrees = list()
     for i in range(points):
         trio = (approx[i], approx[(i + 1) % points], approx[(i + 2) % points])
@@ -98,20 +99,28 @@ def is_shape_roind(approx, points):
         delta = degrees[(i + 1) % points] - degrees[i]
         if delta > 90:
             return False
-    print("round")
-    print(degrees)
+    if debug:
+        print("round")
+        print(degrees)
     return True
 
 def detect_coin_or_bill(front, back, debug = False):
-    img = front
+    from PIL import Image
+    if isinstance(front, Image.Image):
+        img = np.array(front.convert("L"))
+    else:
+        if len(front.shape) > 2 or front.shape[2] > 1:
+            img = cv2.cvtColor(front, cv2.COLOR_BGR2GRAY)
+        else:
+            img = front
     # scale down
-    (width, height) = img.shape
+    width = img.shape[0]
+    height = img.shape[1]
     scale_width = 250 / width
     scale_height = 250 / height
     scale = min(max(scale_height, scale_width), 1)
     img = cv2.resize(img, (0, 0), fx=scale, fy=scale)
     stack = img
-    (width, height) = img.shape
 
     # inverse, background should be black
     # img = 255 - img
@@ -138,14 +147,17 @@ def detect_coin_or_bill(front, back, debug = False):
         # plt.ylabel('some numbers')
         # plt.show()
         # (found, points, box) = find_shape_hough(th_img, True, th)
-        print(found, points)
+        if debug:
+            print(found, points)
         if found == 1:
-            print("found single shape")
+            if debug:
+                print("found single shape")
             if points == 4:
-                print("rect")
+                if debug:
+                    print("rect")
                 return ("bill", approx)
             if points > 6:
-                if is_shape_roind(approx, points):
+                if is_shape_roind(approx, points, debug):
                     return ("coin", approx)
                 for i in range(points):
                     exclude = list(approx)

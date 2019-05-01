@@ -4,7 +4,7 @@ from django.db import models
 from PIL import Image
 from os import path
 from jsonfield import JSONField
-
+import cv2 as cv
 
 UPLOAD_DIR = path.normpath("./uploads")
 
@@ -26,9 +26,11 @@ class Bill(models.Model):
     def read_front_image(self):
         if not self.front.url:
             return None
-        return Image.open(self.front)
+        return cv.imread(self.front.path)
+        #return Image.open(self.front)
 
     def read_back_image(self):
         if not self.back.url:
             return None
-        return Image.open(self.back)
+        return cv.imread(self.front.path)
+#        return Image.open(self.back)
