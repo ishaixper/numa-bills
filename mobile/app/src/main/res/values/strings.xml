@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Numa</string>
+    <string name="no_camera_found">No camera found</string>
+    <string name="camera_in_use">Camera in use or unavailable</string>
+    <string name="capture">capture</string>
+    <string name="permission_denied">Camera permission denied</string>
+    <string name="main_activity_title">Bills capture app</string>
+    <string name="photo_taken_successfully">Photo taken successfully</string>
+    <string name="something_went_wrong">Something went wrong:</string>
+    <string name="fetch_bill_foreground">Fetch bill foreground</string>
+    <string name="fetch_bill_background">Fetch bill background</string>
+    <string name="uploading_message">Uploading...</string>
+</resources>

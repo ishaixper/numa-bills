@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/activity_camera_textbox"
+        android:layout_width="match_parent"
+        android:textSize="20sp"
+        android:background="@android:color/black"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_height="wrap_content" />
+
+    <TextureView
+        android:id="@+id/activity_camera_texture"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:layout_height="@dimen/camera_layout_size">
+
+        <Button
+            android:id="@+id/activity_camera_button"
+            android:layout_width="@dimen/camera_button_size"
+            android:layout_gravity="center"
+            android:layout_height="@dimen/camera_button_size"
+            android:gravity="center"
+            android:background="@drawable/camera_button"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black" />
+    </FrameLayout>
+
+</LinearLayout>
