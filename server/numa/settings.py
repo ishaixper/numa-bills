@@ -23,9 +23,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'w7p$35%aw52ph#rsw7x0lb21#4%jzq@r*r)5c9__3ei%20s2zf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+import os
 DEBUG = True
+if 'ENV' in os.environ and os.environ["ENV"] == "PRODUCTION":
+    DEBUG = False
+    print("RUNNING IN PRODUCTION")
 
-ALLOWED_HOSTS = ["37.142.37.70", "numa.gq", "localhost", "127.0.0.1"]
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = ["numa.gq", "numa-backend.herokuapp.com"]
 
 
 # Application definition
@@ -76,14 +83,22 @@ WSGI_APPLICATION = 'numa.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if 'DATABASE_URL' in os.environ:
+    import dj_database_url
+    DATABASES = {
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # }
     }
-}
-
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -127,6 +142,6 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny'
     ]
 }

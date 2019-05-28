@@ -1,0 +1,10 @@
+dj-database-url==0.5.0
+Django==2.2.1
+djangorestframework==3.9.4
+jsonfield==2.0.2
+numpy==1.16.3
+opencv-python==4.1.0.25
+Pillow==6.0.0
+psycopg2==2.8.2
+pytz==2019.1
+sqlparse==0.3.0

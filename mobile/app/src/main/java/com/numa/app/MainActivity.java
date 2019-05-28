@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -69,15 +70,19 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  @SuppressLint("SetTextI18n")
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == CAPTURE_PHOTOS) {
+      String resultString = data.getStringExtra("data");
       if (resultCode == Activity.RESULT_OK) {
-        mainTextView.setText(data.getStringExtra("data"));
+        // mainTextView.setText(data.getStringExtra("data"));
+        mainTextView.setText(resultString);
       } else if (resultCode == Activity.RESULT_CANCELED) {
-        mainTextView.setText(R.string.something_went_wrong);
+        // mainTextView.setText(R.string.something_went_wrong);
+        mainTextView.setText(R.string.something_went_wrong + " " + resultString);
       }
     }
   }

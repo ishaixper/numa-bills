@@ -162,7 +162,10 @@ public class CameraActivity extends AppCompatActivity {
           @Override
           public void onFailure(Call<ResponseBody> call, Throwable t) {
             pd.dismiss();
-            setResult(Activity.RESULT_CANCELED);
+              Intent intent = new Intent();
+              intent.putExtra("data", t.toString());
+              setResult(Activity.RESULT_CANCELED, intent);
+            // setResult(Activity.RESULT_CANCELED);
             finish();
           }
         });

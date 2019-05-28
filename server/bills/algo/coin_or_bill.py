@@ -1,44 +1,43 @@
 import cv2
 import numpy as np
-from skimage import data, color, img_as_ubyte
-from skimage.feature import canny
-from skimage.transform import hough_ellipse
-from skimage.draw import ellipse_perimeter
+# from skimage import data, color, img_as_ubyte
+# from skimage.feature import canny
+# from skimage.transform import hough_ellipse
+# from skimage.draw import ellipse_perimeter
 
 font = cv2.FONT_HERSHEY_COMPLEX
 
 
-def find_shape_hough(img, debug=False, debug_name=""):
-    edges = canny(img, sigma=2.0,
-                  low_threshold=0.55, high_threshold=0.8)
-
-    # Perform a Hough Transform
-    # The accuracy corresponds to the bin size of a major axis.
-    # The value is chosen in order to get a single high accumulator.
-    # The threshold eliminates low accumulators
-    result = hough_ellipse(edges, accuracy=20, threshold=250,
-                           min_size=100, max_size=120)
-    result.sort(order='accumulator')
-    found = len(result)
-    if found == 0:
-        return (0, 0, None)
-    best = list(result[-1])
-    yc, xc, a, b = [int(round(x)) for x in best[1:5]]
-    orientation = best[5]
-    # Draw the ellipse on the original image
-    cy, cx = ellipse_perimeter(yc, xc, a, b, orientation)
-    img[cy, cx] = (0, 0, 255)
-    return (found, 14, None)
+# def find_shape_hough(img, debug=False, debug_name=""):
+#     edges = canny(img, sigma=2.0,
+#                   low_threshold=0.55, high_threshold=0.8)
+#
+#     # Perform a Hough Transform
+#     # The accuracy corresponds to the bin size of a major axis.
+#     # The value is chosen in order to get a single high accumulator.
+#     # The threshold eliminates low accumulators
+#     result = hough_ellipse(edges, accuracy=20, threshold=250,
+#                            min_size=100, max_size=120)
+#     result.sort(order='accumulator')
+#     found = len(result)
+#     if found == 0:
+#         return (0, 0, None)
+#     best = list(result[-1])
+#     yc, xc, a, b = [int(round(x)) for x in best[1:5]]
+#     orientation = best[5]
+#     # Draw the ellipse on the original image
+#     cy, cx = ellipse_perimeter(yc, xc, a, b, orientation)
+#     img[cy, cx] = (0, 0, 255)
+#     return (found, 14, None)
 
 
 def find_single_external_shape(img, debug=False, debug_name=""):
     (width, height) = img.shape
-    contours, hir = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hir = cv2.findContours(255 - img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if debug:
-        blank_image = np.zeros(img.shape, np.uint8)
-        blank_image = 255 - blank_image
+        blank_image = np.full(img.shape, 255, np.uint8)
     found = 0
-    points = 0
+    found_points = 0
     box = None
     flatten = None
     for cnt in contours:
@@ -49,8 +48,8 @@ def find_single_external_shape(img, debug=False, debug_name=""):
         # skip shapes that are less than 20% of width or height
         (n, _, _) = approx.shape
         flatten = approx.reshape(n, 2)
-        x_col = flatten[:, 0]
-        y_col = flatten[:, 1]
+        x_col = flatten[:, 1]
+        y_col = flatten[:, 0]
         xmax = x_col.max()
         ymax = y_col.max()
         xmin = x_col.min()
@@ -60,8 +59,10 @@ def find_single_external_shape(img, debug=False, debug_name=""):
 
         if debug:
             print(xmax, ymax, xmin, ymin)
-        if x_delta < width / 20 or y_delta < height / 20:
+        if x_delta < width / 10 or y_delta < height / 10 or \
+            x_delta > width * 0.98 or y_delta > height * 0.98:
             continue
+        found_points = points;
         box = (xmin, ymin, xmax, ymax)
         found += 1
         if debug:
@@ -80,7 +81,7 @@ def find_single_external_shape(img, debug=False, debug_name=""):
                 cv2.putText(blank_image, "Circle", (x, y), font, 1, (12))
     if debug:
         cv2.imshow(str(debug_name), np.hstack((img, blank_image)))
-    return (found, points, box, flatten)
+    return (found, found_points, box, flatten)
 
 def is_shape_roind(approx, points, debug = False):
     degrees = list()
@@ -113,13 +114,27 @@ def detect_coin_or_bill(front, back, debug = False):
             img = cv2.cvtColor(front, cv2.COLOR_BGR2GRAY)
         else:
             img = front
+
+    border_color_top = np.mean(img[0, :])
+    border_color_bottom = np.mean(img[-1, :])
+    border_color_left = np.mean(img[:, 0])
+    border_color_right = np.mean(img[:, -1])
+    border_color = np.mean([border_color_top, border_color_bottom, border_color_left, border_color_right])
     # scale down
     width = img.shape[0]
     height = img.shape[1]
-    scale_width = 250 / width
-    scale_height = 250 / height
+    scale_width = 350 / width
+    scale_height = 350 / height
     scale = min(max(scale_height, scale_width), 1)
     img = cv2.resize(img, (0, 0), fx=scale, fy=scale)
+
+    # # expand image
+    # PADDING = 40
+    # (w, h) = img.shape
+    # bigger = np.full((w + PADDING*2, h + PADDING*2), border_color, dtype=np.uint8)
+    # x_offset = y_offset = PADDING
+    # bigger[x_offset:x_offset + w, y_offset:y_offset + h] = img
+    # img = bigger
     stack = img
 
     # inverse, background should be black
@@ -135,12 +150,13 @@ def detect_coin_or_bill(front, back, debug = False):
         stack = np.hstack((stack, img))
 
     # kernel = np.ones((10, 10), np.uint8)
-    # cv2.dilate(img, kernel, iterations=1)
+    # img = cv2.dilate(img, kernel, iterations=1)
     # kernel = np.ones((10, 10), np.uint8)
-    # cv2.erode(img, kernel, iterations=1)
+    # img = cv2.erode(img, kernel, iterations=1)
 
     for th in range(50, 255, 15):
         _, th_img = cv2.threshold(img, th, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C)
+
         (found, points, box, approx) = find_single_external_shape(th_img, debug, th)
         # import matplotlib.pyplot as plt
         # plt.plot(approx)
@@ -170,7 +186,7 @@ def detect_coin_or_bill(front, back, debug = False):
 
 
 if __name__ == "__main__":
-    img = cv2.imread("bill.jpg", cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread("uploads\\detections\\image1_nFFdPMl.jpg")#, cv2.IMREAD_GRAYSCALE)
     #img = cv2.imread("coin1.jpg", cv2.IMREAD_GRAYSCALE)
     #img = cv2.imread("coin-down.jpg", cv2.IMREAD_GRAYSCALE)
     #img = cv2.imread("duck.jpg", cv2.IMREAD_GRAYSCALE)

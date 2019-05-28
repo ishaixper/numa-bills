@@ -52,7 +52,7 @@ public class Network {
 
   public interface FileUploadService {
     @Multipart
-    @POST("detection")
+    @POST("detection/")
     Call<ResponseBody> uploadMultipleFiles(
         @Part MultipartBody.Part file1, @Part MultipartBody.Part file2);
   }

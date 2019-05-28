@@ -1,0 +1,12 @@
+.idea
+test_set
+tools
+venv
+tmp
+tmp.csv
+uploads
+*.sqlite3
+*.csv
+.idea
+__pycache__
+**/__pycache__
