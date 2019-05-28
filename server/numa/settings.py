@@ -34,6 +34,14 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ["numa.gq", "numa-backend.herokuapp.com"]
 
+if 'AWS_KEY' in os.environ:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    #STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    #AWS_REGION = "us-east-1"
+    AWS_ACCESS_KEY_ID = os.environ['AWS_KEY']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET']
+    AWS_STORAGE_BUCKET_NAME = 'numa-storage'
+    AWS_DEFAULT_ACL = None
 
 # Application definition
 
@@ -45,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_s3_storage',
     'bills',
     #    'app',
 ]
@@ -144,4 +153,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ]
+}
+
+AWS = {
+    'BUCKET': 'numa-storage'
 }
