@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.10.233</domain>
         <domain includeSubdomains="true">numa.gq</domain>
+        <domain includeSubdomains="true">numa-backend.herokuapp.com</domain>
     </domain-config>
 </network-security-config>
