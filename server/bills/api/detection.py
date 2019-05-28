@@ -38,27 +38,31 @@ class DetectionViewSet(viewsets.ModelViewSet):
     serializer_class = DetectionSerializer
 
     def create(self, request):
-        for value in request.FILES.values():
-            if Path(value.name).suffix[1:] == "":
-                value.name = value.name + ".jpg"
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        instance = serializer.instance
-        front = instance.read_front_image()
-        back = instance.read_back_image()
-        if detector is None:
-            load_detector()
-        start = time.time()
-        detection_response = detector.predict(front, back)
-        elapsed = time.time() - start
-        instance.time = int(round(elapsed * 1000))
-        instance.result = detection_response
-        instance.save()
-        first_detection = detection_response[0]
-        first_detection_id = first_detection[0]
-        if first_detection[1] < 0.7 or first_detection_id == 0:
-            return Response("Detection failed", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
-        else:
-            bill = Bill.objects.get(id=first_detection_id)
-            return Response(bill.name, status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+        try:
+            for value in request.FILES.values():
+                if Path(value.name).suffix[1:] == "":
+                    value.name = value.name + ".jpg"
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            instance = serializer.instance
+            front = instance.read_front_image()
+            back = instance.read_back_image()
+            if detector is None:
+                load_detector()
+            start = time.time()
+            detection_response = detector.predict(front, back)
+            elapsed = time.time() - start
+            instance.time = int(round(elapsed * 1000))
+            instance.result = detection_response
+            instance.save()
+            first_detection = detection_response[0]
+            first_detection_id = first_detection[0]
+            if first_detection[1] < 0.7 or first_detection_id == 0:
+                return Response("Detection failed", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+            else:
+                bill = Bill.objects.get(id=first_detection_id)
+                return Response(bill.name, status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+        except Exception as e:
+            print(e)
+            return Response("Backend internal error", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
