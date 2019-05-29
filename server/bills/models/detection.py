@@ -2,27 +2,32 @@ from django.db import models
 from os import path
 from jsonfield import JSONField
 import cv2 as cv
+from bills.models.common import get_file_name, read_from_file_field
 
-UPLOAD_DIR = path.normpath("./uploads/detections")
+
+def get_detection_file_name(instance, filename):
+    return get_file_name("detection")
 
 class Detection(models.Model):
-    front = models.ImageField(upload_to=UPLOAD_DIR)
-    back = models.ImageField(upload_to=UPLOAD_DIR)
+    front = models.ImageField(upload_to=get_detection_file_name)
+    back = models.ImageField(upload_to=get_detection_file_name)
     created_on = models.DateTimeField(auto_now_add=True)
     time = models.IntegerField(default=0)
     result = JSONField(default=[])
 
     def __str__(self):
-        return self.id
+        return str(self.result)
 
     def read_front_image(self):
-        if not self.front.url:
+        try:
+            return read_from_file_field(self.front)
+        except Exception as e:
+            print("error loading ", e)
             return None
-        return cv.imread(self.front.path)
         #return Image.open(self.front)
 
     def read_back_image(self):
-        if not self.back.url:
+        if not self.back:
             return None
-        return cv.imread(self.front.path)
+        return read_from_file_field(self.back)
 #        return Image.open(self.back)

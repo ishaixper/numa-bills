@@ -7,7 +7,8 @@ Base class for Image Search Algorithm
 '''
 class ImageSearchAlgorithmBase(ABC):
 
-    def __init__(self):
+    def __init__(self, debug = False):
+        self.debug = debug
         pass
 
     @abstractmethod

@@ -33,7 +33,9 @@ font = cv2.FONT_HERSHEY_COMPLEX
 
 def find_single_external_shape(img, debug=False, debug_name=""):
     (width, height) = img.shape
-    contours, hir = cv2.findContours(255 - img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if img[0][0] == 255:
+        img = 255 - img
+    contours, hir = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if debug:
         blank_image = np.full(img.shape, 255, np.uint8)
     found = 0
