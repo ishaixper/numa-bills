@@ -39,10 +39,10 @@ def load_detector():
 
     # from django import db
     # db.connections.close_all()
-    _queue = JoinableQueue()
-    _process = Process(target= detection_worker.detection_worker, name='worker', kwargs={'queue':_queue})
-    atexit.register(_cleanup)
-    _process.start()
+#    _queue = JoinableQueue()
+#    _process = Process(target= detection_worker.detection_worker, name='worker', kwargs={'queue':_queue})
+#    atexit.register(_cleanup)
+#    _process.start()
 
 def _cleanup():
     global _queue
@@ -63,10 +63,16 @@ class DetectionViewSet(viewsets.ModelViewSet):
 
 
     def save_created_deferred(self, validated_data, detection_response, elapsed):
-        global _queue
-        prevent_file_close(validated_data["front"])
-        prevent_file_close(validated_data["back"])
-        _queue.put((validated_data["front"].file.name, validated_data["back"].file.name, detection_response, elapsed))
+         instance = Detection()
+         instance.time = int(round(elapsed * 1000))
+         instance.front.save("front.jpg", validated_data['front'].file)
+         instance.back.save("back.jpg", validated_data['back'].file)
+         instance.result = detection_response
+         instance.save()
+#        global _queue
+#        prevent_file_close(validated_data["front"])
+#        prevent_file_close(validated_data["back"])
+#        _queue.put((validated_data["front"].file.name, validated_data["back"].file.name, detection_response, elapsed))
 
     def create(self, request):
         print("running detection")

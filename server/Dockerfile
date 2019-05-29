@@ -1,5 +1,5 @@
 FROM python
-RUN apt-get update && apt-get install nginx supervisor -y
+RUN apt-get update && apt-get install nginx supervisor vim -y
 RUN pip install uwsgi
 # setup all the configfiles
 #RUN echo "daemon off;" >> /etc/nginx/nginx.conf

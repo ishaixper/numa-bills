@@ -23,7 +23,6 @@ def detection_worker(queue=None):
                 tries += 1
 
     def save_created_sync(front_url, back_url, detection_response, elapsed):
-
         print("perform save to db")
         instance = Detection()
         with open(front_url, "rb") as front_fp:
@@ -32,6 +31,7 @@ def detection_worker(queue=None):
                 instance.front.save("front.jpg", front_fp)
                 instance.back.save("back.jpg", back_fp)
                 instance.result = detection_response
+                print("save to db")
                 instance.save()
         print("really deleting file")
         delete_file_wait(front_url)

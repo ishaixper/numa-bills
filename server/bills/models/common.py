@@ -12,7 +12,7 @@ def set_storage_test(test):
 
 def get_file_name(group):
     name = "%s.%s" % (uuid.uuid4(), "jpg")
-    dir = path.normpath("./uploads/" + group)
+    dir = path.normpath("/app/uploads/" + group)
     if is_test:
         return path.join("test", dir, name)
     else:
