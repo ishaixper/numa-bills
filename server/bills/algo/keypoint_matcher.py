@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-import matplotlib.pyplot as plt
 
 from bills.algo.image_utils import scale_down
 
@@ -35,6 +34,8 @@ def match_and_score(a1, a2, debug = False):
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+
     catalog_front = preapre_image_for_keypoints(cv.imread("../../uploads/FR_788_front_pQ9pAh8.jpg"))
     #test_front = preapre_image(cv.imread("../../test_set/788/fr 788.jpg"))
     test_front = preapre_image_for_keypoints(cv.imread("../../test_set/fr 748/fr 748 back.jpg"))
