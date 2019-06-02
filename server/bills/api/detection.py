@@ -108,7 +108,7 @@ class DetectionViewSet(viewsets.ModelViewSet):
                 instance.save()
                 first_detection = detection_response[0]
                 first_detection_id = first_detection[0]
-                if first_detection[1] < 0.7 or first_detection_id == 0:
+                if first_detection[1] < 0.65 or first_detection_id == 0:
                     return Response("Detection failed", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
                 else:
                     bill = Bill.objects.get(id=first_detection_id)
