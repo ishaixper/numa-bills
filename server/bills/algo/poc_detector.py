@@ -80,7 +80,7 @@ class POCDetector(ImageSearchAlgorithmBase):
             return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
         best_rate = max(relative['us'], relative['il'])
         print("best", best_rate)
-        if best_rate < -1.4:
+        if best_rate < -1.3:
             print("too far from either")
             return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
 
