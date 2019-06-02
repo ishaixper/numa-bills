@@ -23,6 +23,7 @@ class POCDetector(ImageSearchAlgorithmBase):
 
     def add_bill_to_library(self, id, front, back, bill):
         if bill.catalog == USD_CATALOG_ID:
+            print(front)
             self.USD_ID = id
             self.us_keypoints = (self.get_keypoints(front), self.get_keypoints(back))
         elif bill.catalog == SHEKEL_ID:

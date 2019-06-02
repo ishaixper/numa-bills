@@ -3,6 +3,7 @@ from os import path
 import numpy as np
 import cv2 as cv
 
+from numa.settings import UPLOAD_DIR
 
 is_test = False
 
@@ -12,14 +13,14 @@ def set_storage_test(test):
 
 def get_file_name(group):
     name = "%s.%s" % (uuid.uuid4(), "jpg")
-    dir = path.normpath("/app/uploads/" + group)
+    dir = path.normpath(UPLOAD_DIR + group)
     if is_test:
         return path.join("test", dir, name)
     else:
         return path.join(dir, name)
 
 def read_from_file_field(file_field):
-    return read_from_file_stream(file_field.open('rb'))
+    return cv.imread(file_field.path)#read_from_file_stream(file_field.open('rb'))
 
 def read_from_file_stream(file_stream):
     img_array = np.asarray(bytearray(file_stream.read()), dtype=np.uint8)

@@ -31,6 +31,7 @@ def load_detector():
     bills = Bill.objects.all()
     for bill in bills:
         front = bill.read_front_image()
+        print(front)
         if front is None:
             print("ERROR: bill front image is empty " + str(bill.id))
             continue
@@ -86,8 +87,13 @@ class DetectionViewSet(viewsets.ModelViewSet):
             print("request valid")
             # do the detection
             validated_data = serializer.validated_data
-            front = read_from_file_stream(validated_data['front'])
-            back = read_from_file_stream(validated_data['back'])
+            instance = Detection()
+            instance.front.save("front.jpg", validated_data['front'].file)
+            instance.back.save("back.jpg", validated_data['back'].file)
+            instance.save()
+
+            front = instance.read_front_image()#read_from_file_stream(validated_data['front'])
+            back = instance.read_back_image()#read_from_file_stream(validated_data['back'])
             if detector is None:
                 load_detector()
             start = time.time()
@@ -97,7 +103,10 @@ class DetectionViewSet(viewsets.ModelViewSet):
                 elapsed = time.time() - start
                 print("detect done in " + str(elapsed))
                 print(detection_response)
-                self.save_created_deferred(validated_data, detection_response, elapsed)
+                #self.save_created_deferred(validated_data, detection_response, elapsed)
+                instance.time = int(round(elapsed * 1000))
+                instance.result = detection_response
+                instance.save()
                 first_detection = detection_response[0]
                 first_detection_id = first_detection[0]
                 if first_detection[1] < 0.7 or first_detection_id == 0:

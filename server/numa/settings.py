@@ -141,6 +141,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+#UPLOAD_DIR = "/app/uploads/"
+UPLOAD_DIR = "uploads/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
