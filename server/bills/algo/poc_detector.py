@@ -15,6 +15,10 @@ class POCDetector(ImageSearchAlgorithmBase):
         self.IL_ID = 0
         self.us_keypoints = None
         self.il_keypoints = None
+        self.max_us = 160
+        self.max_il = 140
+        lena = cv.imread(path.join(path.dirname(__file__), "..", "..", "test_set", "catalog","lena.jpg"))
+        self.lena_kp = self.get_keypoints(lena)
 
 
     def get_keypoints(self, img):
@@ -60,14 +64,37 @@ class POCDetector(ImageSearchAlgorithmBase):
             # back_score = distance_back / cat_back_distance
             score = np.mean([distance_front, distance_back])
             scores[name] = -score
+        score_delta = abs(scores['us'] - scores['il'])
         if self.debug:
             print(scores)
-        p = self.create_distribution_from_scores(scores)
-        if self.debug:
-            print(p)
-        results = np.zeros((2, 2))
-        results[:, 0] = [self.USD_ID, self.IL_ID]
-        results[:, 1] = p
-        results = results[results[:,1].argsort()[::-1]]
-        return results
+        if score_delta < 20:
+            print("too close, can't match")
+            return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
+
+        if -scores['us'] > self.max_us:
+            print("too far from us")
+            if -scores['il'] > self.max_il:
+                print("too far from either")
+                return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
+            else:
+                print("IL")
+                return ((self.IL_ID, 1.0), (self.USD_ID, 0.0))
+        else:
+            if -scores['il'] > self.max_il:
+                print("US")
+                return ((self.USD_ID, 1.0), (self.IL_ID, 0.0))
+            else:
+                print("close call, but I choose the lower")
+                if scores['us'] < scores['il']:
+                    return ((self.USD_ID, 1.0), (self.IL_ID, 0.0))
+                else:
+                    return ((self.IL_ID, 1.0), (self.USD_ID, 0.0))
+        # p = self.create_distribution_from_scores(scores)
+        # if self.debug:
+        #     print(p)
+        # results = np.zeros((2, 2))
+        # results[:, 0] = [self.USD_ID, self.IL_ID]
+        # results[:, 1] = p
+        # results = results[results[:,1].argsort()[::-1]]
+        # return results
 
