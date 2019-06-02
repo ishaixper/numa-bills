@@ -15,8 +15,8 @@ class POCDetector(ImageSearchAlgorithmBase):
         self.IL_ID = 0
         self.us_keypoints = None
         self.il_keypoints = None
-        self.threshold = {'us': 150, 'il': 135}
-        self.shift = {'us': 0, 'il': 0}
+        self.threshold = {'us': 60, 'il': 80}
+        self.shift = {'us': -100, 'il': -40}
         # lena = cv.imread(path.join(path.dirname(__file__), "..", "..", "test_set", "catalog","lena.jpg"))
         # self.lena_kp = self.get_keypoints(lena)
 
@@ -39,7 +39,7 @@ class POCDetector(ImageSearchAlgorithmBase):
     def create_distribution_from_scores(self, scores):
         values = np.array(list(scores.values()))
         # values = np.exp(values / 50)
-        values = np.exp(values * 2)
+        values = np.exp(values)
         sum = np.sum(values)
         values = values / sum
         return values
@@ -65,8 +65,8 @@ class POCDetector(ImageSearchAlgorithmBase):
             # front_score = distance_front / cat_front_distance
             # back_score = distance_back / cat_back_distance
             score = np.mean([distance_front, distance_back])
-            scores[name] = -score - self.shift[name]
-            relative[name] = (-score - self.shift[name])/ self.threshold[name]
+            scores[name] = score
+            relative[name] = (-score - self.shift[name]) / self.threshold[name]
 
         if self.debug:
             print(scores)
