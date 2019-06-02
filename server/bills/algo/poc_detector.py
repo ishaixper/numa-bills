@@ -17,8 +17,8 @@ class POCDetector(ImageSearchAlgorithmBase):
         self.il_keypoints = None
         self.max_us = 160
         self.max_il = 140
-        lena = cv.imread(path.join(path.dirname(__file__), "..", "..", "test_set", "catalog","lena.jpg"))
-        self.lena_kp = self.get_keypoints(lena)
+        # lena = cv.imread(path.join(path.dirname(__file__), "..", "..", "test_set", "catalog","lena.jpg"))
+        # self.lena_kp = self.get_keypoints(lena)
 
 
     def get_keypoints(self, img):
