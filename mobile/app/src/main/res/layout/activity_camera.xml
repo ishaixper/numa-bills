@@ -15,11 +15,18 @@
         android:gravity="center"
         android:layout_height="wrap_content" />
 
-    <TextureView
-        android:id="@+id/activity_camera_texture"
+    <FrameLayout
+        android:id="@+id/activity_camera_preview_holder"
         android:layout_width="match_parent"
+        android:background="@android:color/black"
         android:layout_weight="1"
-        android:layout_height="0dp" />
+        android:layout_height="0dp">
+
+        <TextureView
+            android:id="@+id/activity_camera_texture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

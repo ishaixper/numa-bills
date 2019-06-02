@@ -11,12 +11,9 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.numa.app.network.Network;
-
-import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,14 +23,17 @@ import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
+
+import com.numa.app.network.Network;
+
+import java.io.File;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends AppCompatActivity {
-
-  public static final String POST_URL = "http://numa.gq/api/detect";
 
   private int currentPhoto;
   private TextView title;
@@ -66,7 +66,6 @@ public class CameraActivity extends AppCompatActivity {
           }
         });
 
-    // Every time the provided texture view changes, recompute layout
     texture.addOnLayoutChangeListener(
         new View.OnLayoutChangeListener() {
           @Override
@@ -146,7 +145,6 @@ public class CameraActivity extends AppCompatActivity {
     pd.show();
 
     Network.postFiles(
-        POST_URL,
         foregroundFile,
         backgroundFile,
         new Callback<ResponseBody>() {
@@ -154,7 +152,13 @@ public class CameraActivity extends AppCompatActivity {
           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             pd.dismiss();
             Intent intent = new Intent();
-            intent.putExtra("data", "BLA");
+            String responseString;
+            try {
+              responseString = response.body().string();
+            } catch (Exception e) {
+              responseString = getString(R.string.success_upload_no_response);
+            }
+            intent.putExtra("data", responseString);
             setResult(Activity.RESULT_OK, intent);
             finish();
           }
@@ -162,10 +166,9 @@ public class CameraActivity extends AppCompatActivity {
           @Override
           public void onFailure(Call<ResponseBody> call, Throwable t) {
             pd.dismiss();
-              Intent intent = new Intent();
-              intent.putExtra("data", t.toString());
-              setResult(Activity.RESULT_CANCELED, intent);
-            // setResult(Activity.RESULT_CANCELED);
+            Intent intent = new Intent();
+            intent.putExtra("data", t.toString());
+            setResult(Activity.RESULT_CANCELED, intent);
             finish();
           }
         });
@@ -182,7 +185,6 @@ public class CameraActivity extends AppCompatActivity {
             .setLensFacing(lensFacing)
             .setTargetResolution(screenSize)
             .setTargetAspectRatio(screenAspectRatio)
-            .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation())
             .setTargetRotation(texture.getDisplay().getRotation())
             .build();
 
@@ -192,6 +194,22 @@ public class CameraActivity extends AppCompatActivity {
           @Override
           public void onUpdated(Preview.PreviewOutput output) {
             texture.setSurfaceTexture(output.getSurfaceTexture());
+
+            float width = output.getTextureSize().getWidth();
+            float height = output.getTextureSize().getHeight();
+
+            // Hack fix until CameraX api will fix it
+            if (height < width) {
+              float temp = width;
+              width = height;
+              height = temp;
+            }
+            if ((float) texture.getWidth() / (float) texture.getHeight() != width / height) {
+              texture.setLayoutParams(
+                  new FrameLayout.LayoutParams(
+                      texture.getWidth(), (int) ((float) texture.getWidth() * height / width)));
+            }
+
             updateTransform();
           }
         });

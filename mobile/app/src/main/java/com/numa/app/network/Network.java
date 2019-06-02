@@ -1,10 +1,9 @@
 package com.numa.app.network;
 
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 
-import androidx.annotation.NonNull;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -18,8 +17,7 @@ import retrofit2.http.Part;
 
 public class Network {
 
-  public static void postFiles(
-      String url, File file1, File file2, final Callback<ResponseBody> callback) {
+  public static void postFiles(File file1, File file2, final Callback<ResponseBody> callback) {
     FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
 
     // create part for file (photo, video, ...)
@@ -31,13 +29,11 @@ public class Network {
         new Callback<ResponseBody>() {
           @Override
           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            Log.d("aaa", "success4 " + response.message());
             callback.onResponse(call, response);
           }
 
           @Override
           public void onFailure(Call<ResponseBody> call, Throwable t) {
-            Log.d("aaa", "error : " + t.getMessage());
             callback.onFailure(call, t);
           }
         });

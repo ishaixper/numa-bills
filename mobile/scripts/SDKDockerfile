@@ -19,5 +19,7 @@ RUN $ANDROID_HOME/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSIO
     "platforms;android-${ANDROID_VERSION}" \
     "platform-tools"
 
+RUN apt-get update
+RUN apt-get install -y nano dos2unix
 RUN mkdir /application
 WORKDIR /application

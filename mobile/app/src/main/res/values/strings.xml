@@ -9,5 +9,6 @@
     <string name="something_went_wrong">Something went wrong:</string>
     <string name="fetch_bill_foreground">Fetch bill foreground</string>
     <string name="fetch_bill_background">Fetch bill background</string>
-    <string name="uploading_message">Uploading...</string>
+    <string name="uploading_message">Uploading…</string>
+    <string name="success_upload_no_response">Uploaded successfully without any response</string>
 </resources>
