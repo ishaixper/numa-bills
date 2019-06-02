@@ -15,8 +15,8 @@ class POCDetector(ImageSearchAlgorithmBase):
         self.IL_ID = 0
         self.us_keypoints = None
         self.il_keypoints = None
-        self.max_us = 160
-        self.max_il = 140
+        self.threshold = {'us': 150, 'il': 130}
+        self.shift = {'us': 0, 'il': 0}
         # lena = cv.imread(path.join(path.dirname(__file__), "..", "..", "test_set", "catalog","lena.jpg"))
         # self.lena_kp = self.get_keypoints(lena)
 
@@ -38,7 +38,8 @@ class POCDetector(ImageSearchAlgorithmBase):
 
     def create_distribution_from_scores(self, scores):
         values = np.array(list(scores.values()))
-        values = np.exp(values / 50)
+        # values = np.exp(values / 50)
+        values = np.exp(values * 2)
         sum = np.sum(values)
         values = values / sum
         return values
@@ -48,6 +49,7 @@ class POCDetector(ImageSearchAlgorithmBase):
             raise Exception("Did not load notes")
         candidates = {"us": self.us_keypoints, "il": self.il_keypoints}
         scores = {}
+        relative = {}
         front_kp = self.get_keypoints(front)
         back_kp = self.get_keypoints(back)
         max_score = -float("inf")
@@ -63,38 +65,40 @@ class POCDetector(ImageSearchAlgorithmBase):
             # front_score = distance_front / cat_front_distance
             # back_score = distance_back / cat_back_distance
             score = np.mean([distance_front, distance_back])
-            scores[name] = -score
-        score_delta = abs(scores['us'] - scores['il'])
+            scores[name] = -score - self.shift[name]
+            relative[name] = (-score - self.shift[name])/ self.threshold[name]
+
         if self.debug:
             print(scores)
-        if score_delta < 20:
+            print(relative)
+        p = self.create_distribution_from_scores(relative)
+        if self.debug:
+            print(p)
+        score_delta = abs(relative['us'] - relative['il'])
+        if score_delta < 0.1:
             print("too close, can't match")
             return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
+        best_rate = max(relative['us'], relative['il'])
+        print("best", best_rate)
+        if best_rate < -1.4:
+            print("too far from either")
+            return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
 
-        if -scores['us'] > self.max_us:
-            print("too far from us")
-            if -scores['il'] > self.max_il:
-                print("too far from either")
-                return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
-            else:
-                print("IL")
-                return ((self.IL_ID, 1.0), (self.USD_ID, 0.0))
-        else:
-            if -scores['il'] > self.max_il:
-                print("US")
-                return ((self.USD_ID, 1.0), (self.IL_ID, 0.0))
-            else:
-                print("close call, but I choose the lower")
-                if scores['us'] < scores['il']:
-                    return ((self.USD_ID, 1.0), (self.IL_ID, 0.0))
-                else:
-                    return ((self.IL_ID, 1.0), (self.USD_ID, 0.0))
-        # p = self.create_distribution_from_scores(scores)
-        # if self.debug:
-        #     print(p)
-        # results = np.zeros((2, 2))
-        # results[:, 0] = [self.USD_ID, self.IL_ID]
-        # results[:, 1] = p
-        # results = results[results[:,1].argsort()[::-1]]
-        # return results
+        # if relative['us'] < relative['il']:
+        #     if relative['us'] > 1:
+        #         print("too far from either")
+        #         return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
+        #     else:
+        #         return ((self.USD_ID, 1.0), (self.IL_ID, 0.0))
+        # else:
+        #     if relative['il'] > 1:
+        #         print("too far from either")
+        #         return ((self.USD_ID, 0.5), (self.IL_ID, 0.5))
+        #     else:
+        #         return ((self.IL_ID, 1.0), (self.USD_ID, 0.0))
+        results = np.zeros((2, 2))
+        results[:, 0] = [self.USD_ID, self.IL_ID]
+        results[:, 1] = p
+        results = results[results[:,1].argsort()[::-1]]
+        return results
 
