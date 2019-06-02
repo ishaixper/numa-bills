@@ -31,7 +31,6 @@ def load_detector():
     bills = Bill.objects.all()
     for bill in bills:
         front = bill.read_front_image()
-        print(front)
         if front is None:
             print("ERROR: bill front image is empty " + str(bill.id))
             continue
