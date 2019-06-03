@@ -23,6 +23,7 @@ import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
+import androidx.core.content.ContextCompat;
 
 import com.numa.app.network.Network;
 
@@ -36,18 +37,22 @@ import retrofit2.Response;
 public class CameraActivity extends AppCompatActivity {
 
   private int currentPhoto;
-  private TextView title;
+  private TextView frontTitle, backTitle;
   private CameraX.LensFacing lensFacing = CameraX.LensFacing.BACK;
   private TextureView texture;
   private View button;
   private ImageCapture imageCapture;
   private File backgroundFile, foregroundFile;
+  private View processingHolder, frontBackHolder;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_camera);
-    title = findViewById(R.id.activity_camera_textbox);
+    frontBackHolder = findViewById(R.id.activity_camera_back_front_holder);
+    processingHolder = findViewById(R.id.activity_camera_processing_holder);
+    frontTitle = findViewById(R.id.activity_camera_front_side_text);
+    backTitle = findViewById(R.id.activity_camera_back_side_text);
     texture = findViewById(R.id.activity_camera_texture);
     button = findViewById(R.id.activity_camera_button);
     currentPhoto = 1;
@@ -56,7 +61,10 @@ public class CameraActivity extends AppCompatActivity {
   }
 
   private void initComponents() {
-    title.setText(R.string.fetch_bill_foreground);
+    frontBackHolder.setVisibility(View.VISIBLE);
+    processingHolder.setVisibility(View.GONE);
+    frontTitle.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+    backTitle.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
 
     texture.post(
         new Runnable() {
@@ -108,15 +116,10 @@ public class CameraActivity extends AppCompatActivity {
                         backgroundFile = file;
                         processPhotos();
                       } else {
-                        Toast.makeText(
-                                CameraActivity.this,
-                                R.string.photo_taken_successfully,
-                                Toast.LENGTH_LONG)
-                            .show();
-
                         foregroundFile = file;
                         currentPhoto++;
-                        title.setText(R.string.fetch_bill_background);
+                        frontTitle.setTextColor(ContextCompat.getColor(CameraActivity.this, android.R.color.darker_gray));
+                        backTitle.setTextColor(ContextCompat.getColor(CameraActivity.this, android.R.color.white));
                         button.setEnabled(true);
                       }
                     }
@@ -140,9 +143,8 @@ public class CameraActivity extends AppCompatActivity {
   }
 
   private void processPhotos() {
-    final ProgressDialog pd = new ProgressDialog(this);
-    pd.setMessage(getString(R.string.uploading_message));
-    pd.show();
+    frontBackHolder.setVisibility(View.GONE);
+    processingHolder.setVisibility(View.VISIBLE);
 
     Network.postFiles(
         foregroundFile,
@@ -150,25 +152,23 @@ public class CameraActivity extends AppCompatActivity {
         new Callback<ResponseBody>() {
           @Override
           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            pd.dismiss();
-            Intent intent = new Intent();
+            Intent intent = new Intent(CameraActivity.this, ResultActivity.class);
             String responseString;
             try {
               responseString = response.body().string();
             } catch (Exception e) {
               responseString = getString(R.string.success_upload_no_response);
             }
-            intent.putExtra("data", responseString);
-            setResult(Activity.RESULT_OK, intent);
+            intent.putExtra(ResultActivity.DATA, responseString);
+            startActivity(intent);
             finish();
           }
 
           @Override
           public void onFailure(Call<ResponseBody> call, Throwable t) {
-            pd.dismiss();
-            Intent intent = new Intent();
-            intent.putExtra("data", t.toString());
-            setResult(Activity.RESULT_CANCELED, intent);
+            Intent intent = new Intent(CameraActivity.this, ResultActivity.class);
+            intent.putExtra(ResultActivity.DATA, t.toString());
+            startActivity(intent);
             finish();
           }
         });

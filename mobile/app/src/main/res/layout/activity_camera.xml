@@ -4,16 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:id="@+id/activity_camera_textbox"
-        android:layout_width="match_parent"
-        android:textSize="20sp"
-        android:background="@android:color/black"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:layout_height="wrap_content" />
+    tools:context=".PrePhotosActivity">
 
     <FrameLayout
         android:id="@+id/activity_camera_preview_holder"
@@ -28,21 +19,87 @@
             android:layout_height="wrap_content" />
     </FrameLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:background="@android:color/black"
-        android:layout_height="@dimen/camera_layout_size">
+        android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/activity_camera_button"
-            android:layout_width="@dimen/camera_button_size"
-            android:layout_gravity="center"
-            android:layout_height="@dimen/camera_button_size"
-            android:gravity="center"
-            android:background="@drawable/camera_button"
-            android:textSize="20sp"
-            android:textAllCaps="false"
-            android:textColor="@android:color/black" />
-    </FrameLayout>
+        <LinearLayout
+            android:id="@+id/activity_camera_processing_holder"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/activity_camera_processing_text"
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="@string/processing"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:indeterminate="true"
+                android:layout_width="17sp"
+                android:layout_height="17sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_camera_back_front_holder"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/activity_camera_front_side_text"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:text="@string/front_side"
+                android:gravity="center"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/activity_camera_back_side_text"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="@string/back_side"
+                android:gravity="center"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="#171615"
+            android:layout_height="1dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:background="@android:color/black"
+            android:layout_height="@dimen/camera_layout_size">
+
+            <Button
+                android:id="@+id/activity_camera_button"
+                android:layout_width="@dimen/camera_button_size"
+                android:layout_gravity="center"
+                android:layout_height="@dimen/camera_button_size"
+                android:gravity="center"
+                android:background="@drawable/camera_button"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black" />
+        </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>
