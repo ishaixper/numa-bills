@@ -29,9 +29,11 @@ class POCDetector(ImageSearchAlgorithmBase):
         if bill.catalog == USD_CATALOG_ID:
             self.USD_ID = id
             self.us_keypoints = (self.get_keypoints(front), self.get_keypoints(back))
+            print("US num of KP", len(self.us_keypoints[0][0]), len(self.us_keypoints[1][0]))
         elif bill.catalog == SHEKEL_ID:
             self.IL_ID = id
             self.il_keypoints = (self.get_keypoints(front), self.get_keypoints(back))
+            print("US num of KP", len(self.il_keypoints[0][0]), len(self.il_keypoints[1][0]))
 
     def destroy(self):
         pass
@@ -52,6 +54,9 @@ class POCDetector(ImageSearchAlgorithmBase):
         relative = {}
         front_kp = self.get_keypoints(front)
         back_kp = self.get_keypoints(back)
+
+        print("Sample num of KP", len(front_kp[0]), len(back_kp[0]))
+
         max_score = -float("inf")
         min_matching = None
         min_type = None
@@ -62,6 +67,8 @@ class POCDetector(ImageSearchAlgorithmBase):
             (matching_front, distance_front) = match_and_score(cat_front_kp, front_kp)
             (matching_back, distance_back) = match_and_score(cat_back_kp, back_kp)
             print(name, distance_front, distance_back)
+            print("Match front #", len(matching_front[0]))
+            print("Match front #", len(matching_back[0]))
             # front_score = distance_front / cat_front_distance
             # back_score = distance_back / cat_back_distance
             score = np.mean([distance_front, distance_back])

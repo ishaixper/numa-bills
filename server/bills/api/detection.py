@@ -117,7 +117,7 @@ class DetectionViewSet(viewsets.ModelViewSet):
                 first_detection = detection_response[0]
                 first_detection_id = first_detection[0]
                 if first_detection[1] < 0.65 or first_detection_id == 0:
-                    return Response("Detection failed", status=status.HTTP_201_CREATED)
+                    return Response("Couldn't match a note", status=status.HTTP_201_CREATED)
                 else:
                     bill = Bill.objects.get(id=first_detection_id)
                     return Response(bill.name, status=status.HTTP_201_CREATED)
