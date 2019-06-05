@@ -26,4 +26,5 @@
     <string name="ebay">eBay</string>
     <string name="population">Population</string>
     <string name="auction_house">Auction House</string>
+    <string name="get_grade">Get Grade</string>
 </resources>

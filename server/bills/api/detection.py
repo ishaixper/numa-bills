@@ -2,7 +2,7 @@ import atexit
 from multiprocessing import Process, JoinableQueue
 from pathlib import Path
 
-from rest_framework import serializers, viewsets, status
+from rest_framework import serializers, viewsets, status, renderers
 from rest_framework.response import Response
 import time
 
@@ -57,10 +57,18 @@ def prevent_file_close(upload_file):
     upload_file.file.unlink = lambda name: print("not really closing " + name)
 
 
+
+class PlainTextRenderer(renderers.BaseRenderer):
+    media_type = 'text/plain'
+    format = 'txt'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data.encode(self.charset)
+
 class DetectionViewSet(viewsets.ModelViewSet):
     queryset = Detection.objects.all()
     serializer_class = DetectionSerializer
-
+    renderer_classes = (PlainTextRenderer,)
 
     def save_created_deferred(self, validated_data, detection_response, elapsed):
         instance = Detection()
@@ -109,16 +117,15 @@ class DetectionViewSet(viewsets.ModelViewSet):
                 first_detection = detection_response[0]
                 first_detection_id = first_detection[0]
                 if first_detection[1] < 0.65 or first_detection_id == 0:
-                    return Response("Detection failed", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+                    return Response("Detection failed", status=status.HTTP_201_CREATED)
                 else:
                     bill = Bill.objects.get(id=first_detection_id)
-                    return Response(bill.name, status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+                    return Response(bill.name, status=status.HTTP_201_CREATED)
             except Exception as detectionE:
                 elapsed = time.time() - start
                 print(detectionE)
                 self.save_created_deferred(validated_data, {'error': str(detectionE)}, elapsed)
-                return Response("Detection internal error", status=status.HTTP_201_CREATED,
-                                headers={'Content-Type': 'text/plain'})
+                return Response("Detection internal error", status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
-            return Response("Backend internal error", status=status.HTTP_201_CREATED, headers={'Content-Type': 'text/plain'})
+            return Response("Backend internal error", status=status.HTTP_201_CREATED)

@@ -11,24 +11,17 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
-            android:src="@mipmap/ic_launcher"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_width="60dp"
+            android:src="@drawable/numa_logo"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             tools:ignore="ContentDescription"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:textSize="40sp"
-            android:textColor="@android:color/black"
-            android:background="@android:color/white"
-            android:textStyle="bold"
-            android:text="@string/numa"
-            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +39,7 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/note_identification"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/path_86"
                 android:id="@+id/activity_main_button_note_identification"
                 android:background="@drawable/top_left_rounded_button"
                 android:foreground="?attr/selectableItemBackground"
@@ -59,7 +52,7 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/coin_identification"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/coin_identification"
                 android:background="@drawable/top_right_rounded_button"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
@@ -78,7 +71,8 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/my_collection"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/my_collection"
+                android:id="@+id/activity_main_button_my_collection"
                 android:background="@android:color/white"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
@@ -90,7 +84,8 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/grade_estimate"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/grade_estimate"
+                android:id="@+id/activity_main_button_grade_estimation"
                 android:background="@android:color/white"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
@@ -109,7 +104,8 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/want_to_buy"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/want_to_buy"
+                android:id="@+id/activity_main_button_want_to_buy"
                 android:background="@android:color/white"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
@@ -121,7 +117,8 @@
 
             <com.numa.app.Views.MainButton
                 app:text="@string/want_to_sell"
-                app:icon="@mipmap/ic_launcher"
+                app:icon="@drawable/want_to_sell"
+                android:id="@+id/activity_main_button_want_to_sell"
                 android:background="@android:color/white"
                 android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
@@ -138,7 +135,8 @@
             android:orientation="horizontal"
             android:layout_height="0dp"
             app:text="@string/financing_information"
-            app:icon="@mipmap/ic_launcher"
+            app:icon="@drawable/financing_information"
+            android:id="@+id/activity_main_button_finance"
             android:background="@drawable/bottom_left_right_rounded_button"
             android:foreground="?attr/selectableItemBackground"
             android:layout_margin="1dp"

@@ -219,6 +219,7 @@ public class CameraActivity extends AppCompatActivity {
             .setLensFacing(lensFacing)
             .setTargetAspectRatio(screenAspectRatio)
             .setTargetRotation(texture.getDisplay().getRotation())
+            .setTargetResolution(screenSize)
             .setCaptureMode(ImageCapture.CaptureMode.MAX_QUALITY)
             .build();
 

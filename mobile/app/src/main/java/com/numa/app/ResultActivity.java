@@ -33,12 +33,42 @@ public class ResultActivity extends Activity {
             }
         });
 
-        findViewById(R.id.activity_result_btn_back).setOnClickListener(new View.OnClickListener() {
+//        findViewById(R.id.activity_result_btn_back).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onBackPressed();
+//            }
+//        });
+
+        findViewById(R.id.activity_result_btn_get_grade).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                startActivity(new Intent(ResultActivity.this, GradeEstimateActivity.class));
             }
         });
+
+        findViewById(R.id.activity_result_btn_my_collection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ResultActivity.this, MyCollectionActivity.class));
+            }
+        });
+
+
+        findViewById(R.id.activity_result_btn_wants_to_buy).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ResultActivity.this, WantToBuyActivity.class));
+            }
+        });
+
+        findViewById(R.id.activity_result_btn_wants_to_sell).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ResultActivity.this, WantToSellActivity.class));
+            }
+        });
+
     }
 
     @Override

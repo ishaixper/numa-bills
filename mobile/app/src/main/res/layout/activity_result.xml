@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/black"
-    tools:context=".ResultActivity">
+      android:background="@drawable/note_identification_bg"
+
+          tools:context=".ResultActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,16 +55,16 @@
         android:textColor="@android:color/white" />
 
     <TextView
-        android:id="@+id/activity_result_btn_back"
+        android:id="@+id/activity_result_btn_get_grade"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:background="@drawable/secondary_invert_button"
         android:layout_marginBottom="30dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:text="@string/back"
-        android:paddingRight="20dp"
-        android:paddingLeft="20dp"
+        android:text="@string/get_grade"
+        android:paddingRight="33dp"
+        android:paddingLeft="33dp"
         android:paddingTop="10dp"
         android:layout_marginTop="10dp"
         android:paddingBottom="10dp"
@@ -83,6 +84,7 @@
             android:baselineAligned="false">
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_wants_to_buy"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -102,6 +104,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_wants_to_sell"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -129,6 +132,7 @@
             android:baselineAligned="false">
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_my_collection"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -148,6 +152,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_ebay"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -175,6 +180,7 @@
             android:baselineAligned="false">
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_population"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -194,6 +200,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/activity_result_btn_action_house"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
