@@ -1,7 +1,6 @@
 package com.numa.app;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.os.Bundle;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageCapture;
@@ -116,10 +116,14 @@ public class CameraActivity extends AppCompatActivity {
                         backgroundFile = file;
                         processPhotos();
                       } else {
+                        showFrontImageTakenAlert();
                         foregroundFile = file;
                         currentPhoto++;
-                        frontTitle.setTextColor(ContextCompat.getColor(CameraActivity.this, android.R.color.darker_gray));
-                        backTitle.setTextColor(ContextCompat.getColor(CameraActivity.this, android.R.color.white));
+                        frontTitle.setTextColor(
+                            ContextCompat.getColor(
+                                CameraActivity.this, android.R.color.darker_gray));
+                        backTitle.setTextColor(
+                            ContextCompat.getColor(CameraActivity.this, android.R.color.white));
                         button.setEnabled(true);
                       }
                     }
@@ -142,7 +146,20 @@ public class CameraActivity extends AppCompatActivity {
         });
   }
 
-  private void processPhotos() {
+    private void showFrontImageTakenAlert() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(getString(R.string.alert_title));
+        alertDialog.setMessage(getString(R.string.alert_message));
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.OK),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    private void processPhotos() {
     frontBackHolder.setVisibility(View.GONE);
     processingHolder.setVisibility(View.VISIBLE);
 

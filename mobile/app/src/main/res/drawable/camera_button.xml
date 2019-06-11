@@ -3,7 +3,7 @@
     <item android:state_pressed="false">
         <shape android:shape="oval">
             <solid android:color="#858282" />
-            <stroke android:color="#FFFFFF" android:width="5dp" />
+            <stroke android:width="5dp" android:color="#FFFFFF" />
             <size android:width="@dimen/camera_button_size" android:height="@dimen/camera_button_size" />
         </shape>
     </item>
@@ -11,7 +11,7 @@
     <item android:state_pressed="true">
         <shape android:shape="oval">
             <solid android:color="#155DFC" />
-            <stroke android:color="#FFFFFF" android:width="5dp" />
+            <stroke android:width="5dp" android:color="#FFFFFF" />
             <size android:width="@dimen/camera_button_size" android:height="@dimen/camera_button_size" />
         </shape>
     </item>

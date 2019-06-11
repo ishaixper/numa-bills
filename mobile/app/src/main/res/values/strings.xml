@@ -27,4 +27,7 @@
     <string name="population">Population</string>
     <string name="auction_house">Auction House</string>
     <string name="get_grade">Get Grade</string>
+    <string name="alert_message">Now take a photo of the back side of the note</string>
+    <string name="alert_title">Success</string>
+    <string name="OK">OK</string>
 </resources>

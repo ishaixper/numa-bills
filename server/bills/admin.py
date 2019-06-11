@@ -4,4 +4,10 @@ from django.contrib import admin
 from bills.models import Bill, Detection
 
 admin.site.register(Bill)
-admin.site.register(Detection)
+
+
+class DetectionAdmin(admin.ModelAdmin):
+    ordering = ["-created_on"]
+
+
+admin.site.register(Detection, DetectionAdmin)

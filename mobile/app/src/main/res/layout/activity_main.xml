@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.numa.app.Views.UniformTextLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
-            android:src="@drawable/numa_logo"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            tools:ignore="ContentDescription"/>
+            android:src="@drawable/numa_logo"
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:padding="20dp"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:background="#F0F0F0"
-        android:layout_height="match_parent">
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_height="0dp">
+            android:orientation="horizontal">
 
             <com.numa.app.Views.MainButton
-                app:text="@string/note_identification"
-                app:icon="@drawable/path_86"
                 android:id="@+id/activity_main_button_note_identification"
-                android:background="@drawable/top_left_rounded_button"
-                android:foreground="?attr/selectableItemBackground"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="1dp"
                 android:layout_weight="1"
-                android:layout_height="match_parent"
+                android:background="@drawable/top_left_rounded_button"
+                android:foreground="?attr/selectableItemBackground"
                 android:onClick="mainButtonClicked"
+                app:icon="@drawable/path_86"
+                app:text="@string/note_identification"
                 tools:ignore="NestedWeights" />
 
             <com.numa.app.Views.MainButton
@@ -143,4 +143,4 @@
             android:onClick="mainButtonClicked"
             tools:ignore="NestedWeights" />
     </LinearLayout>
-</LinearLayout>
+</com.numa.app.Views.UniformTextLinearLayout>

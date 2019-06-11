@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 public class ResultActivity extends Activity {
 
-    public final static String DATA = "data";
+  public static final String DATA = "data";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

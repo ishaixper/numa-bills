@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="camera_button_size">60dp</dimen>
-    <dimen name="camera_layout_size">72dp</dimen>
+    <dimen name="camera_layout_size">102dp</dimen>
     <dimen name="main_button_corner_radius">30dp</dimen>
+    <dimen name="camera_mark_radius">8dp</dimen>
+    <dimen name="camera_mark_length">30dp</dimen>
+    <dimen name="camera_mark_width">2dp</dimen>
+    <dimen name="camera_mark_width_minus">-2dp</dimen>
 </resources>
