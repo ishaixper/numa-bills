@@ -1,7 +1,7 @@
 boto3==1.9.156
 botocore==1.12.156
 dj-database-url==0.5.0
-Django==2.2.1
+Django==2.2.27
 django-s3-storage==0.12.4
 django-storages==1.7.1
 djangorestframework==3.9.4
